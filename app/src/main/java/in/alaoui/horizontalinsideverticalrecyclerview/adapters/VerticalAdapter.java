@@ -66,7 +66,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
     private List<ChildItem> createChildItems(int firstItem, int lastItem) {
         List<ChildItem> myDataset = new ArrayList<>();
         for(int i=firstItem; i < lastItem; i++) {
-            Log.d(TAG, "firstItem: "+firstItem+" i: "+i+" lastItem: "+lastItem);
+            //Log.d(TAG, "firstItem: "+firstItem+" i: "+i+" lastItem: "+lastItem);
             myDataset.add(new ChildItem("Number "+i, urls[i]));
         }
         return myDataset;
@@ -126,7 +126,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Log.d(TAG, "getText: " + mDataset.get(position).getText());
+        //Log.d(TAG, "getText: " + mDataset.get(position).getText());
         holder.mTextView.setText(mDataset.get(position).getText());
 
         mChildDataset = createChildItems(position*3,(position*3)+3);

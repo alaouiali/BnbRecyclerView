@@ -68,9 +68,8 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Vi
         // - replace the contents of the view with that element
 
 
-
-        Log.d(TAG, "getText: " + mDataset.get(position).getText());
-        Log.d(TAG, "getUrl: " + mDataset.get(position).getUrl());
+        //Log.d(TAG, "getText: " + mDataset.get(position).getText());
+        //Log.d(TAG, "getUrl: " + mDataset.get(position).getUrl());
 
         Picasso.with(mContext)
                 .load(mDataset.get(position).getUrl())

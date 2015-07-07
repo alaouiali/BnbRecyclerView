@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -26,6 +27,17 @@ public class MainActivity extends ActionBarActivity {
     public static int APP_WIDTH;
     public static int APP_HEIGHT;
 
+    private List<ParentItem> myDataset = new ArrayList<>();
+
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private VerticalAdapter mAdapter;
+
+    private boolean loadingFromServer = false;
+    private int itemsListSize;
+    private int firstVisibleItem, lastVisibleItem, lastCompletelyVisibleItem,
+            visibleItemCount, totalItemCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,20 +45,40 @@ public class MainActivity extends ActionBarActivity {
 
         getScreenSize();
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        List<ParentItem> myDataset = createItems();
-        RecyclerView.Adapter mAdapter = new VerticalAdapter(this, myDataset, APP_WIDTH);
+        myDataset = createMoreItems();
+        mAdapter = new VerticalAdapter(this, myDataset, APP_WIDTH);
         mRecyclerView.setAdapter(mAdapter);
+
+        //-- Scroll Listener: Defining behavior when the user scrolls
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                itemsListSize = myDataset.size();
+                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+
+                if (!loadingFromServer && itemsListSize < 8) {
+                    if (itemsListSize == lastVisibleItem + 1) {
+                        Log.d(TAG, "Loading more Items");
+                        myDataset.addAll(createMoreItems());
+                        mAdapter.notifyDataSetChanged();
+                        //loadingFromServer = true;
+                    }
+                }
+
+            }
+        });
     }
 
 
@@ -54,12 +86,13 @@ public class MainActivity extends ActionBarActivity {
      * Creates List of item to populate the parent Vertical RecyclerView
      * @return List of ParentItem
      */
-    private List<ParentItem> createItems() {
-        List<ParentItem> myDataset = new ArrayList<>();
-        for(int i=0; i < 9; i++) {
-            myDataset.add(new ParentItem("Number "+i));
+    private List<ParentItem> createMoreItems() {
+
+        List<ParentItem> dataset = new ArrayList<>();
+        for(int i=myDataset.size(); i < myDataset.size()+2; i++) {
+            dataset.add(new ParentItem("Number "+i));
         }
-        return myDataset;
+        return dataset;
     }
 
     /**
