@@ -18,19 +18,17 @@
     android:layout_height="wrap_content"
 
     >
-
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/horizontal_recycler_view"
-            android:scrollbars="vertical"
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/view_pager"
             android:layout_width="match_parent"
-            android:layout_height="320dp"/>
+            android:layout_height="320dp" />
 
             <RelativeLayout
                 android:id="@+id/text_space"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_below="@+id/horizontal_recycler_view"
+                android:layout_below="@+id/view_pager"
                 android:background="@android:color/white"
                 >
 

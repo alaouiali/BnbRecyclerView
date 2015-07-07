@@ -14,7 +14,6 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.alaoui.horizontalinsideverticalrecyclerview.adapters.VerticalAdapter;
 import in.alaoui.horizontalinsideverticalrecyclerview.models.ParentItem;
 
 
@@ -76,7 +75,6 @@ public class MainActivity extends ActionBarActivity {
                         //loadingFromServer = true;
                     }
                 }
-
             }
         });
     }

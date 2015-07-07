@@ -1,22 +1,23 @@
-package in.alaoui.horizontalinsideverticalrecyclerview.adapters;
+package in.alaoui.horizontalinsideverticalrecyclerview;
 
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import in.alaoui.horizontalinsideverticalrecyclerview.MainActivity;
-import in.alaoui.horizontalinsideverticalrecyclerview.R;
 import in.alaoui.horizontalinsideverticalrecyclerview.models.ChildItem;
 import in.alaoui.horizontalinsideverticalrecyclerview.models.ParentItem;
 
@@ -83,17 +84,13 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView mTextView;
-        public RecyclerView mRecyclerView;
-        //public RecyclerView.LayoutManager mLayoutManager;
-        //public RecyclerView.Adapter mAdapter;
+        public ViewPager mViewPager;
         public ViewHolder(View v, Context context) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.text_bottom);
-            mRecyclerView = (RecyclerView) v.findViewById(R.id.horizontal_recycler_view);
+            mViewPager = (ViewPager) v.findViewById(R.id.view_pager);
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, v.getResources().getDisplayMetrics());
-            mRecyclerView.getLayoutParams().height = (mAppWidth - px);
-            //mLayoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
-            //mAdapter = new VerticalAdapter(this, myDataset);
+            mViewPager.getLayoutParams().height = (mAppWidth - px);
         }
     }
 
@@ -113,33 +110,70 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
                 .inflate(R.layout.vertical_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v, mContext);
-        vh.mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
-        vh.mRecyclerView.setLayoutManager(mLayoutManager);
-
 
         return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        //Log.d(TAG, "getText: " + mDataset.get(position).getText());
         holder.mTextView.setText(mDataset.get(position).getText());
-
         mChildDataset = createChildItems(position*3,(position*3)+3);
-
-        RecyclerView.Adapter mAdapter = new HorizontalAdapter(mContext, mChildDataset, mAppWidth);
-        holder.mRecyclerView.setAdapter(mAdapter);
+        ImagePagerAdapter adapter = new ImagePagerAdapter(mChildDataset);
+        holder.mViewPager.setAdapter(adapter);
 
     }
-
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
     }
+
+    /**
+     * ImagePagerAdapter to display images
+     */
+    private class ImagePagerAdapter extends PagerAdapter {
+
+        List<ChildItem> mData;
+
+        public ImagePagerAdapter(List<ChildItem> data) {
+            mData = data;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Context context = mContext;
+            ImageView mImageView = new ImageView(context);
+            mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            Picasso.with(context)
+                    .load(mData.get(position).getUrl())
+                    .placeholder(R.drawable.place_holder)
+                    .error(R.drawable.place_holder_error)
+                    .into(mImageView);
+
+            ((ViewPager) container).addView(mImageView, 0);
+            return mImageView;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            ((ViewPager) container).removeView((ImageView) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == ((ImageView) object);
+        }
+
+        @Override
+        public int getCount() {
+            return mData.size();
+        }
+    }
+
+
 }
