@@ -34,8 +34,9 @@ public class MainActivity extends ActionBarActivity {
 
     private boolean loadingFromServer = false;
     private int itemsListSize;
-    private int firstVisibleItem, lastVisibleItem, lastCompletelyVisibleItem,
-            visibleItemCount, totalItemCount;
+    private int lastVisibleItem;
+
+    private List<Integer> childPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,24 +60,6 @@ public class MainActivity extends ActionBarActivity {
         mAdapter = new VerticalAdapter(this, myDataset, APP_WIDTH);
         mRecyclerView.setAdapter(mAdapter);
 
-        //-- Scroll Listener: Defining behavior when the user scrolls
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                itemsListSize = myDataset.size();
-                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
-                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
-
-                if (!loadingFromServer && itemsListSize < 8) {
-                    if (itemsListSize == lastVisibleItem + 1) {
-                        Log.d(TAG, "Loading more Items");
-                        myDataset.addAll(createMoreItems());
-                        mAdapter.notifyDataSetChanged();
-                        //loadingFromServer = true;
-                    }
-                }
-            }
-        });
     }
 
 
@@ -87,9 +70,11 @@ public class MainActivity extends ActionBarActivity {
     private List<ParentItem> createMoreItems() {
 
         List<ParentItem> dataset = new ArrayList<>();
-        for(int i=myDataset.size(); i < myDataset.size()+2; i++) {
+        for(int i=0; i < 8; i++) {
             dataset.add(new ParentItem("Number "+i));
         }
+
+
         return dataset;
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,7 +77,6 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
     private static int mAppWidth;
 
     private List<ParentItem> mDataset;
-    private List<ChildItem> mChildDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -87,6 +87,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
         public ViewPager mViewPager;
         public ViewHolder(View v, Context context) {
             super(v);
+            //Log.d(TAG, "ViewHolder");
             mTextView = (TextView) v.findViewById(R.id.text_bottom);
             mViewPager = (ViewPager) v.findViewById(R.id.view_pager);
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, v.getResources().getDisplayMetrics());
@@ -96,33 +97,54 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public VerticalAdapter(Context context, List<ParentItem> myDataset, int appWidth) {
+        //Log.d(TAG, "VerticalAdapter");
         mDataset = myDataset;
         mContext = context;
         mAppWidth = appWidth;
+
     }
 
     // Create new views (invoked by the layout manager)
     @Override
     public VerticalAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
+        //Log.d(TAG, "onCreateViewHolder");
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.vertical_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v, mContext);
-
         return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        Log.d(TAG, "onBindViewHolder/position: " + position);
+
         holder.mTextView.setText(mDataset.get(position).getText());
-        mChildDataset = createChildItems(position*3,(position*3)+3);
+        List<ChildItem> mChildDataset = createChildItems(0, 3);
         ImagePagerAdapter adapter = new ImagePagerAdapter(mChildDataset);
+
         holder.mViewPager.setAdapter(adapter);
+        holder.mViewPager.setCurrentItem(mDataset.get(position).getPosition());
+        holder.mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int positionPager) {
+                mDataset.get(position).setPosition(positionPager);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
@@ -172,6 +194,18 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.ViewHo
         @Override
         public int getCount() {
             return mData.size();
+        }
+    }
+
+
+    public class ItemPosition {
+        int position;
+
+        public int getPosition() {
+            return position;
+        }
+        public void setPosition(int pos) {
+            this.position = pos;
         }
     }
 
