@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
     private List<ParentItem> createMoreItems() {
 
         List<ParentItem> dataset = new ArrayList<>();
-        for(int i=0; i < 8; i++) {
+        for(int i=0; i < 12; i++) {
             dataset.add(new ParentItem("Number "+i));
         }
 
